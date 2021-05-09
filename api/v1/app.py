@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+'''initialize flask aplication'''
 from flask import Flask, Blueprint
 from api.v1.views import app_views
 from models import storage
@@ -11,6 +12,7 @@ app.register_blueprint(app_views)
 
 @app.teardown_appcontext
 def close_teardown(error):
+    '''call storage.close() in error case'''
     storage.close()
 
 
