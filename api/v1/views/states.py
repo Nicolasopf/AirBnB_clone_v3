@@ -6,14 +6,24 @@ from models.state import State
 from models import storage
 
 
-@app_views.route('/states')
+@app_views.route('/states', methods=['GET', 'POST'])
 def list_states():
-    ''' return a json with all the states objects '''
-    objects = storage.all(State)
-    list_objs = []
-    for obj in objects.items():
-        list_objs.append(obj[1].to_dict())
-    return jsonify(list_objs)
+    ''' return a json with all the states objects or update another one '''
+    if request.method == 'GET':
+        objects = storage.all(State)
+        list_objs = []
+        for obj in objects.items():
+            list_objs.append(obj[1].to_dict())
+        return jsonify(list_objs)
+    elif request.method == 'POST':
+        json_input = request.get_json()
+        if json_input and 'name' in json_input.keys():
+            state_obj = State(**json_input)
+            state_obj.save()
+            return jsonify(state_obj.to_dict()), 201
+        elif json_input is None:
+            return abort(400, 'Not a JSON')
+        return abort(400, "Missing name")
 
 
 @app_views.route('/states/<state_id>',
@@ -33,15 +43,6 @@ def states_requests(state_id):
             storage.save()
             return jsonify({})
         return abort(404)
-    elif request.method == 'POST':
-        json_input = request.get_json()
-        if json_input and name in json_input.keys():
-            state_obj = State(**json_input)
-            state_obj.save()
-            return jsonify(state_obj.to_dict()), 201
-        elif json_input is None:
-            return abort(400, 'Not a JSON')
-        return abort(400, "Missing name")
     elif request.method == 'PUT':
         json_input = request.get_json()
         if json_input is None:
