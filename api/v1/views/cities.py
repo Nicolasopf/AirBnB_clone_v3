@@ -29,7 +29,7 @@ def list_cities(state_id):
                 if state_obj['id'] == state_id:
                     json_input['state_id'] = state_id
                     new_obj = City(**json_input)
-                    new_obj.save()
+                    storage.save()
                     return jsonify(new_obj.to_dict())
             return abort(404)
         return abort(400, "Not a JSON")
