@@ -50,7 +50,7 @@ def states_requests(state_id):
         ignored_keys = ["id", "created_at", "updated_at"]
         state_obj = storage.get(State, state_id)
         if state_obj:
-            for k, v in data.items():
+            for k, v in json_input.items():
                 if k not in ignored_keys:
                     setattr(state_obj, k, v)
                     state_obj.save()
