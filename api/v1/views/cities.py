@@ -60,12 +60,12 @@ def list_city(city_id):
         ignored_keys = ['id', 'state_id', 'created_at', 'updated_at']
         if json_input:
             for obj in objects.items():
-                city_obj = obj[1].to_dict()
-                if city_obj['id'] == city_id:
+                city_obj = obj[1]
+                if city_obj.to_dict()['id'] == city_id:
                     for k, v in json_input.items():
                         if k not in ignored_keys:
-                            city_obj[k] = v
-                            storage.save()
-                            return jsonify(city_obj), 200
+                            setattr(city_obj, k, v)
+                    city_obj.save()
+                    return jsonify(city_obj.to_dict()), 200
             return abort(404)
         return abort(400, 'Not a JSON')
