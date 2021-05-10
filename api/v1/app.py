@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 '''initialize flask aplication'''
-from flask import Flask, Blueprint
+from flask import Flask, Blueprint, jsonify
 from api.v1.views import app_views
 from models import storage
 from os import getenv as env
@@ -8,6 +8,12 @@ from os import getenv as env
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 app.register_blueprint(app_views)
+
+
+@app.errorhandler(404)
+def return_error(e):
+    ''' Return error not found in json format '''
+    return jsonify({'error': 'Not found'})
 
 
 @app.teardown_appcontext
@@ -22,5 +28,5 @@ if __name__ == "__main__":
     if env("HBNB_API_HOST"):
         host = env("HBNB_API_HOST")
     if env("HBNB_API_PORT"):
-        port = env("HBNB_API_PORT")
+        port = int(env("HBNB_API_PORT"))
     app.run(host=host, port=port, threaded=True)
