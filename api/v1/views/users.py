@@ -51,7 +51,7 @@ def users_requests(user_id):
     elif request.method == 'PUT':
         json_input = request.get_json()
         if json_input is None:
-            abort(400, 'Not a JSON')
+            return abort(400, 'Not a JSON')
         ignored_keys = ["id", "created_at", "updated_at", "email"]
         user_obj = storage.get(User, user_id)
         if user_obj:
@@ -59,5 +59,5 @@ def users_requests(user_id):
                 if k not in ignored_keys:
                     setattr(user_obj, k, v)
                     user_obj.save()
-            return jsonify(user_obj.to_dict())
+            return jsonify(user_obj.to_dict()), 200
         return abort(404)
