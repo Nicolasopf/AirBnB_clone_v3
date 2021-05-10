@@ -17,10 +17,15 @@ def list_users():
         return jsonify(list_objs)
     elif request.method == 'POST':
         json_input = request.get_json()
-        if json_input and 'name' in json_input.keys():
+        if json_input and 'password' in json_input.keys() and 'email'\
+                in json_input.keys():
             user_obj = User(**json_input)
             user_obj.save()
             return jsonify(user_obj.to_dict()), 201
+        elif 'email' not in json_input.keys():
+            return abort(400, "Missing email")
+        elif 'password' not in json_input.keys():
+            return abort(400, "Missing password")
         elif json_input is None:
             return abort(400, 'Not a JSON')
         return abort(400, "Missing name")
@@ -41,13 +46,13 @@ def users_requests(user_id):
         if user_obj:
             storage.delete(user_obj)
             storage.save()
-            return jsonify({})
+            return jsonify({}), 200
         return abort(404)
     elif request.method == 'PUT':
         json_input = request.get_json()
         if json_input is None:
             abort(400, 'Not a JSON')
-        ignored_keys = ["id", "created_at", "updated_at"]
+        ignored_keys = ["id", "created_at", "updated_at", "email"]
         user_obj = storage.get(User, user_id)
         if user_obj:
             for k, v in json_input.items():
