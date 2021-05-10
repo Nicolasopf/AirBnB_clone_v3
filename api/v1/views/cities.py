@@ -40,13 +40,10 @@ def list_city(city_id):
     ''' return a json with all the cities objects '''
     if request.method == 'GET':
         objects = storage.all(City)
-        list_objs = []
         for obj in objects.items():
             city_obj = obj[1].to_dict()
             if city_obj['id'] == city_id:
-                list_objs.append(city_obj)
-        if list_objs:
-            return jsonify(list_objs)
+                return jsonify(city_obj)
         return abort(404)
     if request.method == 'DELETE':
         objects = storage.all(City)
