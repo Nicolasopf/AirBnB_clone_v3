@@ -5,32 +5,33 @@ from flask import jsonify, abort, request
 from models.city import City
 from models.state import State
 from models.place import Place
+from models.review import Review
 from models import storage
 
 
-@app_views.route('/cities/<city_id>/places', methods=['GET'])
-def list_places(city_id):
+@app_views.route('/places/<place_id>/reviews', methods=['GET'])
+def list_reviews(place_id):
     ''' Return a json with all the places for cities objects '''
-    objects = storage.all(Place)
+    objects = storage.all(Review)
     list_objs = []
     for obj in objects.items():
-        city_obj = obj[1].to_dict()
-        if city_obj['city_id'] == city_id:
-            list_objs.append(city_obj)
+        review_obj = obj[1].to_dict()
+        if review_obj['place_id'] == place_id:
+            list_objs.append(review_obj)
     if list_objs:
         return jsonify(list_objs)
     return abort(404)
 
 
-@app_views.route('/cities/<city_id>/places', methods=['POST'])
-def places_post(city_id):
+@app_views.route('/places/<place_id>/reviews', methods=['POST'])
+def places_post(place_id):
     ''' Return a new Json object'''
     json_input = request.get_json()
     if json_input:
         if 'name' in json_input.keys():
-            if storage.get(City, city_id):
-                json_input['city_id'] = city_id
-                new_obj = City(**json_input)
+            if storage.get(Place, place_id):
+                json_input['place_id'] = place_id
+                new_obj = Review(**json_input)
                 new_obj.save()
                 return jsonify(new_obj.to_dict()), 201
             return abort(404)
@@ -39,9 +40,9 @@ def places_post(city_id):
 
 
 @app_views.route('/places/<place_id>', methods=['GET'])
-def list_place(place_id):
+def list_city(place_id):
     ''' Return a json with all the cities objects '''
-    objects = storage.all(Place)
+    objects = storage.all(Review)
     for obj in objects.items():
         place_obj = obj[1].to_dict()
         if place_obj['id'] == place_id:
