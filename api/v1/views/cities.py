@@ -65,7 +65,7 @@ def list_city(city_id):
                     for k, v in json_input.items():
                         if k not in ignored_keys:
                             setattr(city_obj, k, v)
-                    city_obj.save()
+                    storage.save()
                     return jsonify(city_obj.to_dict()), 200
             return abort(404)
         return abort(400, 'Not a JSON')
