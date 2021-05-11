@@ -51,7 +51,7 @@ def list_city(city_id):
             if city_obj['id'] == city_id:
                 storage.delete(obj[1])
                 storage.save()
-                return jsonify({}), 200
+                return ({}), 200
         return abort(404)
     if request.method == 'PUT':
         json_input = request.get_json()
@@ -65,4 +65,4 @@ def list_city(city_id):
                         city_obj.save()
                 return jsonify(city_obj.to_dict()), 200
             return abort(404)
-        return abort(400, "Not a JSON")
+        return abort(400, 'Not a JSON')
