@@ -30,7 +30,7 @@ def list_cities(state_id):
                     if state_obj['id'] == state_id:
                         json_input['state_id'] = state_id
                         new_obj = City(**json_input)
-                        storage.save()
+                        new_obj.save()
                         return jsonify(new_obj.to_dict()), 201
                 return abort(404)
             return abort(400, "Missing name")
