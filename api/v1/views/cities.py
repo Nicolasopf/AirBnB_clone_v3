@@ -28,7 +28,6 @@ def list_cities(state_id):
                 for obj in objects.items():
                     state_obj = obj[1].to_dict()
                     if state_obj['id'] == state_id:
-                        json_input['state_id'] = state_id
                         new_obj = City(**json_input)
                         new_obj.save()
                         return jsonify(new_obj.to_dict()), 201
