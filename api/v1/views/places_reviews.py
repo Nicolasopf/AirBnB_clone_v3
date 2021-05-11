@@ -10,7 +10,7 @@ from models import storage
 
 
 @app_views.route('/places/<place_id>/reviews', methods=['GET'])
-def list_reviews(place_id):
+def list_places_reviews(place_id):
     ''' Return a json with all the places for cities objects '''
     objects = storage.all(Review)
     list_objs = []
