@@ -22,20 +22,19 @@ def list_cities(state_id):
         return abort(404)
     if request.method == 'POST':
         json_input = request.get_json()
-        if json_input:
-            if 'name' in json_input.keys():
-                objects = storage.all(State)
-                for obj in objects.items():
-                    state_obj = obj[1].to_dict()
-                    if state_obj['id'] == state_id:
-                        json_input['state_id'] = state_id
-                        new_obj = City(**json_input)
-                        storage.save()
-                        return jsonify(new_obj.to_dict()), 201
-                return abort(404)
-            return abort(400, "Missing name")
-        return abort(400, "Not a JSON")
-
+        if json_input and 'name' in json_input.keys():
+            objects = storage.all(State)
+            for obj in objects.items():
+                state_obj = obj[1].to_dict()
+                if state_obj['id'] == state_id:
+                    json_input['state_id'] = state_id
+                    new_obj = City(**json_input)
+                    storage.save()
+                    return jsonify(new_obj.to_dict()), 201
+            return abort(404)
+        elif json_input is None:
+            return abort(400, "Not a JSON")
+        return abort(400, "Missing name")
 
 @app_views.route('/cities/<city_id>', methods=['GET', 'DELETE', 'PUT'])
 def list_city(city_id):
