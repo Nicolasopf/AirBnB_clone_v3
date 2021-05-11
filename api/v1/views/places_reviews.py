@@ -24,7 +24,7 @@ def list_places_reviews(place_id):
 
 
 @app_views.route('/places/<place_id>/reviews', methods=['POST'])
-def places_post(place_id):
+def reviews_post(place_id):
     ''' Return a new Json object'''
     json_input = request.get_json()
     if json_input:
@@ -39,40 +39,40 @@ def places_post(place_id):
     return abort(400, 'Not a JSON')
 
 
-@app_views.route('/places/<place_id>', methods=['GET'])
-def list_city(place_id):
+@app_views.route('/reviews/<review_id>', methods=['GET'])
+def review_get(review_id):
     ''' Return a json with all the cities objects '''
     objects = storage.all(Review)
     for obj in objects.items():
         place_obj = obj[1].to_dict()
-        if place_obj['id'] == place_id:
+        if place_obj['id'] == review_id:
             return jsonify(place_obj)
     return abort(404)
 
 
-@app_views.route('/places/<place_id>', methods=['DELETE'])
-def place_get(place_id):
+@app_views.route('/reviews/<review_id>', methods=['DELETE'])
+def review_delete(review_id):
     ''' Delte a place '''
     objects = storage.all(Place)
     for obj in objects.items():
         place_obj = obj[1].to_dict()
-        if place_obj['id'] == place_id:
+        if place_obj['id'] == review_id:
             storage.delete(obj[1])
             storage.save()
             return jsonify({}), 200
     return abort(404)
 
 
-@app_views.route('/places/<place_id>', methods=['PUT'])
-def place_update(place_id):
+@app_views.route('/reviews/<review_id>', methods=['PUT'])
+def review_update(review_id):
     ''' Update a Place '''
     json_input = request.get_json()
     objects = storage.all(Place)
-    ignored_keys = ['id', 'place_id', 'created_at', 'updated_at']
+    ignored_keys = ['id', 'review_id', 'created_at', 'updated_at']
     if json_input:
         for obj in objects.items():
             place_obj = obj[1]
-            if place_obj.to_dict()['id'] == place_id:
+            if place_obj.to_dict()['id'] == review_id:
                 for k, v in json_input.items():
                     if k not in ignored_keys:
                         setattr(place_obj, k, v)
