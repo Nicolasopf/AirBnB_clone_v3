@@ -30,7 +30,7 @@ def places_post(city_id):
         if 'name' in json_input.keys():
             if storage.get(City, city_id):
                 json_input['city_id'] = city_id
-                new_obj = City(**json_input)
+                new_obj = Place(**json_input)
                 new_obj.save()
                 return jsonify(new_obj.to_dict()), 201
             return abort(404)
