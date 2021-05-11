@@ -30,7 +30,7 @@ def list_cities(state_id):
                     json_input['state_id'] = state_id
                     new_obj = City(**json_input)
                     storage.save()
-                    return jsonify(new_obj.to_dict())
+                    return jsonify(new_obj.to_dict()), 201
             return abort(404)
         return abort(400, "Not a JSON")
 
@@ -68,4 +68,4 @@ def list_city(city_id):
                     city_obj.save()
                     return jsonify(city_obj.to_dict()), 200
             return abort(404)
-        return abort(400, 'Not a JSON')
+        return abort(400, "Not a JSON")
