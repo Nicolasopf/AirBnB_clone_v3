@@ -9,7 +9,7 @@ from models import storage
 @app_views.route('/users', methods=['GET', 'POST'])
 def list_users():
     ''' return a json with all the users objects or update another one '''
-    if request.method == 'GET':
+   if request.method == 'GET':
         objects = storage.all(State)
         list_objs = []
         for obj in objects.items():
