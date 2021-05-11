@@ -28,7 +28,7 @@ def places_post(city_id):
     json_input = request.get_json()
     if json_input:
         if 'name' in json_input.keys():
-            if storage.get(State, city_id):
+            if storage.get(City, city_id):
                 json_input['city_id'] = city_id
                 new_obj = City(**json_input)
                 new_obj.save()
@@ -41,19 +41,18 @@ def places_post(city_id):
 @app_views.route('/places/<place_id>', methods=['GET'])
 def list_city(place_id):
     ''' Return a json with all the cities objects '''
-    if request.method == 'GET':
-        objects = storage.all(City)
-        for obj in objects.items():
-            place_obj = obj[1].to_dict()
-            if place_obj['id'] == place_id:
-                return jsonify(place_obj)
-        return abort(404)
+    objects = storage.all(Place)
+    for obj in objects.items():
+        place_obj = obj[1].to_dict()
+        if place_obj['id'] == place_id:
+            return jsonify(place_obj)
+    return abort(404)
 
 
 @app_views.route('/places/<place_id>', methods=['DELETE'])
 def place_get(place_id):
     ''' Delte a place '''
-    objects = storage.all(City)
+    objects = storage.all(Place)
     for obj in objects.items():
         place_obj = obj[1].to_dict()
         if place_obj['id'] == place_id:
@@ -67,7 +66,7 @@ def place_get(place_id):
 def place_update(place_id):
     ''' Update a Place '''
     json_input = request.get_json()
-    objects = storage.all(City)
+    objects = storage.all(Place)
     ignored_keys = ['id', 'place_id', 'created_at', 'updated_at']
     if json_input:
         for obj in objects.items():
