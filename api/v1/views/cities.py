@@ -51,7 +51,7 @@ def list_city(city_id):
             if city_obj['id'] == city_id:
                 storage.delete(obj[1])
                 storage.save()
-                return jsonify({})
+                return jsonify({}), 200
         return abort(404)
     if request.method == 'PUT':
         json_input = request.get_json()
@@ -64,7 +64,7 @@ def list_city(city_id):
                     for k, v in json_input.items():
                         if k not in ignored_keys:
                             setattr(city_obj, k, v)
-                    city_obj.save()
+                            city_obj.save()
                     return jsonify(city_obj.to_dict()), 200
             return abort(404)
         return abort(400, "Not a JSON")
