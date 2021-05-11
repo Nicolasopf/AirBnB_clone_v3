@@ -39,7 +39,7 @@ def places_post(city_id):
 
 
 @app_views.route('/places/<place_id>', methods=['GET'])
-def list_city(place_id):
+def list_place(place_id):
     ''' Return a json with all the cities objects '''
     objects = storage.all(Place)
     for obj in objects.items():
