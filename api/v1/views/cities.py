@@ -51,7 +51,7 @@ def list_city(city_id):
             if city_obj['id'] == city_id:
                 storage.delete(obj[1])
                 storage.save()
-                return ({}), 200
+                return {}, 200
         return abort(404)
     if request.method == 'PUT':
         json_input = request.get_json()
