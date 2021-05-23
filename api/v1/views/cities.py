@@ -7,17 +7,17 @@ from models.state import State
 from models import storage
 
 
-@app_views.route('/states/<state_id>/cities', methods=['GET', 'POST'])
+@app_views.route('/states/<state_id>/cities', methods=['GET', 'POST'],
+                 strict_slashes=False)
 def list_cities(state_id):
     ''' return a json with all the cities for states objects '''
     if request.method == 'GET':
         state = storage.get(State, state_id)
-
         if not state:
             abort(404)
         list_objs = []
 
-        for city in state:
+        for city in state.cities:
             list_objs.append(city.to_dict())
         return jsonify(list_objs)
 
