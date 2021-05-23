@@ -14,7 +14,7 @@ def list_cities(state_id):
         state = storage.get(State, state_id)
 
         if not state:
-            return abort(404)
+            abort(404)
         list_objs = []
 
         for city in state:
