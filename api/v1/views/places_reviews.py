@@ -12,71 +12,77 @@ from models import storage
 @app_views.route('/places/<place_id>/reviews', methods=['GET'])
 def list_places_reviews(place_id):
     ''' Return a json with all the places for cities objects '''
-    objects = storage.all(Review)
-    list_objs = []
-    for obj in objects.items():
-        review_obj = obj[1].to_dict()
-        if review_obj['place_id'] == place_id:
-            list_objs.append(review_obj)
-    if list_objs:
-        return jsonify(list_objs)
-    return abort(404)
+    place = storage.get(Place, place_id)
+    if not place:
+        abort(404)
+
+    reviews = [review.to_dict() for review in place.reviews]
+    return jsonify(reviews)
 
 
 @app_views.route('/places/<place_id>/reviews', methods=['POST'])
 def reviews_post(place_id):
     ''' Return a new Json object'''
-    json_input = request.get_json()
-    if json_input:
-        if 'name' in json_input.keys():
-            if storage.get(Place, place_id):
-                json_input['place_id'] = place_id
-                new_obj = Review(**json_input)
-                new_obj.save()
-                return jsonify(new_obj.to_dict()), 201
-            return abort(404)
-        return abort(400, "Missing name")
-    return abort(400, 'Not a JSON')
+    place = storage.get(Place, place_id)
+    if not place:
+        abort(404)
+
+    data = request.get_json()
+    if not data:
+        abort(400, "Not a JSON")
+    if 'user_id' not in data:
+        abort(400, "Missing user_id")
+
+    user = storage.get(User, data['user_id'])
+    if not user:
+        abort(404)
+
+    if 'text' not in data:
+        abort(400, "Missing text")
+
+    data['place_id'] = place_id
+    instance = Review(**data)
+    instance.save()
+    return make_response(jsonify(instance.to_dict()), 201)
 
 
 @app_views.route('/reviews/<review_id>', methods=['GET'])
 def review_get(review_id):
     ''' Return a json with all the cities objects '''
-    objects = storage.all(Review)
-    for obj in objects.items():
-        place_obj = obj[1].to_dict()
-        if place_obj['id'] == review_id:
-            return jsonify(place_obj)
-    return abort(404)
+    review = storage.get(Review, review_id)
+    if not review:
+        abort(404)
+    return jsonify(review.to_dict())
 
 
 @app_views.route('/reviews/<review_id>', methods=['DELETE'])
 def review_delete(review_id):
     ''' Delte a place '''
-    objects = storage.all(Place)
-    for obj in objects.items():
-        place_obj = obj[1].to_dict()
-        if place_obj['id'] == review_id:
-            storage.delete(obj[1])
-            storage.save()
-            return jsonify({}), 200
-    return abort(404)
+    review = storage.get(Review, review_id)
+    if not review:
+        abort(404)
+    storage.delete(review)
+    storage.save()
+
+    return make_response(jsonify({}), 200)
 
 
 @app_views.route('/reviews/<review_id>', methods=['PUT'])
 def review_update(review_id):
     ''' Update a Place '''
-    json_input = request.get_json()
-    objects = storage.all(Place)
-    ignored_keys = ['id', 'review_id', 'created_at', 'updated_at']
-    if json_input:
-        for obj in objects.items():
-            place_obj = obj[1]
-            if place_obj.to_dict()['id'] == review_id:
-                for k, v in json_input.items():
-                    if k not in ignored_keys:
-                        setattr(place_obj, k, v)
-                        place_obj.save()
-                return jsonify(place_obj.to_dict()), 200
-        return abort(404)
-    return abort(400, "Not a JSON")
+    review = storage.get(Review, review_id)
+    if not review:
+        abort(404)
+
+    data = request.get_json()
+    if not data:
+        abort(400, "Not a JSON")
+
+    ignore = ['id', 'user_id', 'place_id', 'created_at', 'updated_at']
+
+    for key, value in data.items():
+        if key not in ignore:
+            setattr(review, key, value)
+
+    storage.save()
+    return make_response(jsonify(review.to_dict()), 200)
