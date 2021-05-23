@@ -11,16 +11,17 @@ from models import storage
 def list_cities(state_id):
     ''' return a json with all the cities for states objects '''
     if request.method == 'GET':
-        objects = storage.all(City)
+        state = storage.get(State, state_id)
+
+        if not state:
+            return abort(404)
         list_objs = []
-        for obj in objects.items():
-            city_obj = obj[1].to_dict()
-            if city_obj['state_id'] == state_id:
-                list_objs.append(city_obj)
-        if list_objs:
-            return jsonify(list_objs)
-        return abort(404)
-    if request.method == 'POST':
+
+        for city in state:
+            list_objs.append(city.to_dict())
+        return jsonify(list_objs)
+
+    else if request.method == 'POST':
         json_input = request.get_json()
         if json_input:
             if 'name' in json_input.keys():
