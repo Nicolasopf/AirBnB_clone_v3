@@ -21,7 +21,7 @@ def list_cities(state_id):
             list_objs.append(city.to_dict())
         return jsonify(list_objs)
 
-    else if request.method == 'POST':
+    elif request.method == 'POST':
         json_input = request.get_json()
         if json_input:
             if 'name' in json_input.keys():
