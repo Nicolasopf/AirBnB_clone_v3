@@ -23,17 +23,28 @@ def list_places(city_id):
 @app_views.route('/cities/<city_id>/places', methods=['POST'])
 def places_post(city_id):
     ''' Return a new Json object'''
-    json_input = request.get_json()
-    if json_input:
-        if 'name' in json_input.keys():
-            if storage.get(City, city_id):
-                json_input['city_id'] = city_id
-                new_obj = City(**json_input)
-                new_obj.save()
-                return jsonify(new_obj.to_dict()), 201
-            abort(404)
-        abort(400, "Missing name")
-    abort(400, 'Not a JSON')
+    city = storage.get(City, city_id)
+    if not city:
+        abort(404)
+
+    data = request.get_json()
+    if not data:
+        abort(400, "Not a JSON")
+
+    if 'user_id' not in data:
+        abort(400, "Missing user_id")
+
+    user = storage.get(User, data['user_id'])
+
+    if not user:
+        abort(404)
+
+    if 'name' not in request.get_json():
+        abort(400, description="Missing name")
+    data["city_id"] = city_id
+    instance = Place(**data)
+    instance.save()
+    return make_response(jsonify(instance.to_dict()), 201)
 
 
 @app_views.route('/places/<place_id>', methods=['GET'])
